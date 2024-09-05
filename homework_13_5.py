@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
-api = '123'
+api = '7227838526:AAHuAtKJ3k0NSDANLHGk0A7GbMLT0N9HB6k'
 bot = Bot(token = api)
 dp = Dispatcher(bot, storage = MemoryStorage())
 
@@ -29,6 +29,10 @@ async def start_message(message):
 async def set_age(message):
     await message.answer('Введите свой возраст:')
     await UserState.age.set()
+
+@dp.message_handler(text=['Информация'])
+async def inform(message):
+    await message.answer('Это бот Владислава Васильевича. Создан в 2024 году.')
 
 @dp.message_handler()
 async def all_message(message):
