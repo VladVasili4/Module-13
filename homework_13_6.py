@@ -47,6 +47,8 @@ async def set_age(call):
 async def get_formulas(call):
     await call.message.answer('мужчинам: 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5; \n '
                               'женщинам: 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161')
+    # await call.answer         # чтобы инлайн-кнопка после выполнения команды становилась кликабельна.
+                                # Hо у меня и без этой команды она кликабельна ?????? !!!!!!
 
 @dp.message_handler(text=['Информация'])
 async def inform(message):
