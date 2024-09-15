@@ -7,7 +7,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import asyncio
 
 
-api = '123'
+# api = '7227838526:AAHuAtKJ3k0NSDANLHGk0A7GbMLT0N9HB6k'
 bot = Bot(token=api)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
@@ -25,15 +25,15 @@ kb.add(button1)
 kb.insert(button2)
 
 gender_kb = InlineKeyboardMarkup(inline_keyboard=[
-    [KeyboardButton(text='Мужчина', callback_data='man_')],
-    [KeyboardButton(text='Женщина', callback_data='woman_')]
+    [InlineKeyboardButton(text='Мужчина', callback_data='man_')],
+    [InlineKeyboardButton(text='Женщина', callback_data='woman_')]
 ])
 
 buy1_kb = InlineKeyboardMarkup(inline_keyboard=[
-    [KeyboardButton(text='Итого', callback_data='man_formula')]])
+    [InlineKeyboardButton(text='Итого', callback_data='man_formula')]])
 
 buy2_kb = InlineKeyboardMarkup(inline_keyboard=[
-    [KeyboardButton(text='Итого', callback_data='woman_formula')]])
+    [InlineKeyboardButton(text='Итого', callback_data='woman_formula')]])
 
 class UserState(StatesGroup):
     age = State()
