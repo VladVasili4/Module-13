@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-api = '7227838526:AAHuAtKJ3k0NSDANLHGk0A7GbMLT0N9HB6k'
+api = '444'
 bot = Bot(token=api)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
