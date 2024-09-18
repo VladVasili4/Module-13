@@ -1,3 +1,4 @@
+import logging
 from aiogram import Bot, Dispatcher, types, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup     #Машина состояний
@@ -6,8 +7,11 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import asyncio
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# api = '7'
+
+api = '7227838526:AAHuAtKJ3k0NSDANLHGk0A7GbMLT0N9HB6k'
 bot = Bot(token=api)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
@@ -25,21 +29,14 @@ kb.add(button1)
 kb.insert(button2)
 
 gender_kb = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Мужчина', callback_data='man_')],
-    [InlineKeyboardButton(text='Женщина', callback_data='woman_')]
+    [InlineKeyboardButton(text='Мужчина', callback_data='man_f')],
+    [InlineKeyboardButton(text='Женщина', callback_data='woman_f')]
 ])
-
-buy1_kb = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Итого', callback_data='man_formula')]])
-
-buy2_kb = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Итого', callback_data='woman_formula')]])
 
 class UserState(StatesGroup):
     age = State()
     growth = State()
     weight = State()
-    # gender = State()
 
 @dp.message_handler(commands=['start'])
 async def start_message(message):
@@ -60,17 +57,6 @@ async def get_formulas(call):
                               'женщинам: 10 x вес (кг) + 6,25 x рост (см) – 5 x возраст (г) – 161')
     # await call.answer         # чтобы инлайн-кнопка после выполнения команды становилась кликабельна.
                                 # Hо у меня и без этой команды она кликабельна ?????? !!!!!!)
-
-@dp.callback_query_handler(text=['man_'])
-async def male(call):
-    await call.message.answer(f'Ура, Вы Мужик!', reply_markup=buy1_kb)
-    # await call.answer()
-
-@dp.callback_query_handler(text=['woman_'])
-async def female(call):
-    await call.message.answer(f'Ура, Вы Дама!', reply_markup=buy2_kb)
-    # await call.answer()
-
 
 @dp.message_handler(text=['Информация'])
 async def inform(message):
@@ -96,23 +82,37 @@ async def set_weight(message, state):
 @dp.message_handler(state=UserState.weight)
 async def set_gender(message, state):
     await state.update_data(user_weight=message.text)
+    # await state.finish()             # Без финиша просто висит, чего-то ждет. С финишем выдает ошибки
     await message.answer('Укажите свой пол:', reply_markup=gender_kb)
+    # await state.finish()
 
-@dp.callback_query_handler(text=['man_formula'])
+# @dp.callback_query_handler(text=['man_f'])
+# async def send_calories_man(call):
+#     await call.message.answer(f'Ваша норма калорий слишком велика для расчета') # Работает, т.к. нет ссылок на state
+
+@dp.callback_query_handler(text=['man_f'])
 async def send_calories_man(call, state):
     data = await state.get_data(['user_age', 'user_growth', 'user_weight'])
     count_calories_m = (10.0 * float(data['user_weight']) + 6.25 * float(data['user_growth'])
                       - 5.0 * float(data['user_age']) + 5)
     await call.message.answer(f'Ваша норма калорий : {count_calories_m}')
     await call.answer()
+    await state.finish()
 
-@dp.callback_query_handler(text=['woman_formula'])
-async def send_calories_man(call, state):
+
+
+# @dp.callback_query_handler(text=['woman_f'])
+# async def send_calories_man(call):
+#     await call.message.answer(f'Ваша норма калорий слишком мала для расчета') # Работает, т.к. нет ссылок на state
+
+@dp.callback_query_handler(text=['woman_f'])
+async def send_calories_woman(call, state):
     data = await state.get_data(['user_age', 'user_growth', 'user_weight'])
-    count_calories_m = (10.0 * float(data['user_weight']) + 6.25 * float(data['user_growth'])
+    count_calories_w = (10.0 * float(data['user_weight']) + 6.25 * float(data['user_growth'])
                       - 5.0 * float(data['user_age']) - 161)
-    await call.message.answer(f'Ваша норма калорий : {count_calories_m}')
+    await call.message.answer(f'Ваша норма калорий : {count_calories_w}')
     await call.answer()
+    await state.finish()
 
 
 if __name__ == '__main__':
